@@ -1,4 +1,4 @@
-const { extend } = require("jquery");
+
 
 class expresserror extends Error{
     constructor(status,message){
