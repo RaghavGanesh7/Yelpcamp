@@ -1,5 +1,4 @@
 const express = require("express");
-const { Mongoose } = require("mongoose");
 const app = express()
 const path = require("path")
 const ejsmate = require('ejs-mate')
@@ -42,6 +41,8 @@ mongoose.connect('mongodb://localhost:27017/yelpcamp',
     useUnifiedTopology:true,
     useFindAndModify:false,
 });
+
+//session flash
 
 
 app.use((req,res,next)=>{
