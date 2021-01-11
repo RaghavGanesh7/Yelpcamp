@@ -52,6 +52,7 @@ mongoose.connect('mongodb://localhost:27017/yelpcamp',
 //session flash
 
 app.use((req,res,next)=>{
+    res.locals.currentUser = req.user
     res.locals.success = req.flash("Success")
     res.locals.error = req.flash("Error")
     next()

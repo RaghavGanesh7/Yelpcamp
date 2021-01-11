@@ -13,7 +13,11 @@ router.post("/register",async(req,res)=>{
     const {username,email,password} = req.body
     const user = new User({email:email,username:username})
     const newUser = await User.register(user,password)
-    console.log(newUser)
+    req.login(newUser,err=>{
+        if(err){
+            return next(err)
+        }
+    })
     req.flash("Success","Welcome")
     res.redirect("/campgrounds")
     }catch(e){
@@ -28,6 +32,17 @@ router.get("/login",(req,res)=>{
 
 router.post("/login",passport.authenticate('local',{failureFlash:true,failureRedirect:"/login"}),(req,res)=>{
     req.flash("Success","Welcome Back!")
+    const url = req.session.returnTo
+    if(!url){
+        url = "/campgrounds"
+    }
+    res.redirect(url)
+})
+
+
+router.get("/logout",(req,res)=>{
+    req.logout();
+    req.flash("Success","Logged Out")
     res.redirect("/campgrounds")
 })
 
