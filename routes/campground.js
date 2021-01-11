@@ -18,6 +18,15 @@ const validateCampground = (req, res, next) => {
     }
 }
 
+const isAuthor = async(req,res,next)=>{
+    const id = req.params.id
+    const campground = await Campground.findById(id)
+    if(!campground.author.equals(req.user._id)){
+        req.flash("Error","You do not have permission to the operation")
+        return res.redirect(`/campgrounds/${id}`)
+    }
+    next()
+}
 
 
 //Routes
@@ -28,7 +37,9 @@ router.get("/",catchasync(async(req,res,next)=>{
 }))
 
 router.post("/",validateCampground,isLoggedIn ,catchasync(async(req,res,next)=>{
-    const campground = await new Campground(req.body.campground).save()
+    const campground = await new Campground(req.body.campground)
+    campground.author = req.user._id
+    await campground.save()
     req.flash("Success","Created a campground!")
     res.redirect(`/campgrounds/${campground._id}`)
 }))
@@ -39,7 +50,7 @@ router.get("/new",isLoggedIn,(req,res)=>{
 
 router.get("/:id",isLoggedIn,catchasync(async (req,res,next)=>{
     const id = req.params.id
-    const foundcampground = await Campground.findById(id).populate("reviews")
+    const foundcampground = await Campground.findById(id).populate("reviews").populate("author")
     if(!foundcampground){
         req.flash("Error","Cannot find the campground")
         res.redirect("/campgrounds")
@@ -55,9 +66,9 @@ router.get("/:id/edit", isLoggedIn,catchasync(async(req,res,next)=>{
 
 router.put("/:id",validateCampground,isLoggedIn,catchasync(async(req,res,next)=>{
     const id = req.params.id
-    const campground = await Campground.findByIdAndUpdate(id,{...req.body.campground})
+    const updatedcampground = await Campground.findByIdAndUpdate(id,{...req.body.campground})
     req.flash("Success","Updated Campground")
-    res.redirect(`/campgrounds/${campground._id}`)
+    res.redirect(`/campgrounds/${updatedcampground._id}`)
 }))
 
 router.delete("/:id", isLoggedIn,catchasync(async(req,res)=>{
