@@ -1,51 +1,18 @@
 const express = require("express")
-const review = require("../models/review")
 const router = express.Router()
-const User = require("../models/user")
 const passport = require("passport")
+const users = require("../controllers/users")
 
-router.get("/register",(req,res)=>{
-    res.render("users/register")
-})
+router.get("/register",users.createUser)
 
-router.post("/register",async(req,res)=>{
-    try{
-    const {username,email,password} = req.body
-    const user = new User({email:email,username:username})
-    const newUser = await User.register(user,password)
-    req.login(newUser,err=>{
-        if(err){
-            return next(err)
-        }
-    })
-    req.flash("Success","Welcome")
-    res.redirect("/campgrounds")
-    }catch(e){
-        req.flash("Error",e.message)
-        res.redirect("/register")
-    }
-})
+router.post("/register",users.registerUser)
 
-router.get("/login",(req,res)=>{
-    res.render("users/login")
-})
+router.get("/login",users.renderLogin)
 
-router.post("/login",passport.authenticate('local',{failureFlash:true,failureRedirect:"/login"}),(req,res)=>{
-    req.flash("Success","Welcome Back!")
-    const url = req.session.returnTo
-    if(!url){
-        return res.redirect("/campgrounds")
-    }
-    res.redirect(url)
-   
-})
+router.post("/login",passport.authenticate('local',{failureFlash:true,failureRedirect:"/login"}),users.loginUser)
 
 
-router.get("/logout",(req,res)=>{
-    req.logout();
-    req.flash("Success","Logged Out")
-    res.redirect("/campgrounds")
-})
+router.get("/logout",users.logoutUser)
 
 
 module.exports = router
