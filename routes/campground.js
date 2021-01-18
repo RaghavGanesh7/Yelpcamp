@@ -21,7 +21,7 @@ router.get("/:id",catchasync(campgrounds.showCampground))
 
 router.get("/:id/edit", isLoggedIn,isAuthor,catchasync(campgrounds.editCampground))
 
-router.put("/:id",isLoggedIn,isAuthor,validateCampground,catchasync(campgrounds.editCampgroundPut))
+router.put("/:id",isLoggedIn,isAuthor,upload.array("image"),validateCampground,catchasync(campgrounds.editCampgroundPut))
 
 router.delete("/:id", isLoggedIn,isAuthor,catchasync(campgrounds.deleteCampground))
 

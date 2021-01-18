@@ -46,9 +46,15 @@ module.exports.editCampground = async(req,res,next)=>{
 module.exports.editCampgroundPut = async(req,res,next)=>{
     const id = req.params.id
     const updatedcampground = await Campground.findByIdAndUpdate(id,{...req.body.campground})
+    const images= req.files.map(f=>({
+        url:f.path,
+        filename:f.filename
+    }))
+    updatedcampground.image.push(...images)
+    updatedcampground.save()
     req.flash("Success","Updated Campground")
     res.redirect(`/campgrounds/${updatedcampground._id}`)
-}
+} 
 
 
 module.exports.deleteCampground = async(req,res)=>{
