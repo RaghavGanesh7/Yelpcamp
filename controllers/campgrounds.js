@@ -1,14 +1,17 @@
 const Campground = require("../models/campground")
 
 
-
 module.exports.index = async(req,res,next)=>{
     const campgrounds = await Campground.find({})
     res.render("campgrounds/index",{campgrounds})
 }
 
 module.exports.newCampground = async(req,res,next)=>{
-    const campground = await new Campground(req.body.campground)
+    const campground =new Campground(req.body.campground)
+    campground.image= req.files.map(f=>({
+        url:f.path,
+        filename:f.filename
+    }))
     campground.author = req.user._id;
     await campground.save()
     req.flash("Success","Created a campground!")
@@ -18,7 +21,6 @@ module.exports.newCampground = async(req,res,next)=>{
 module.exports.renderCampground =(req,res)=>{
     res.render("campgrounds/new")
 }
-
 
 
 module.exports.showCampground = async (req,res,next)=>{
