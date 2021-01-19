@@ -11,6 +11,8 @@ var upload = multer({ storage })
 
 //Routes
 
+
+
 router.get("/",catchasync(campgrounds.index))
 
 router.post("/",isLoggedIn,upload.array("image"),validateCampground,catchasync(campgrounds.newCampground))

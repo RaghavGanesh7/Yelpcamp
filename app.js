@@ -20,6 +20,7 @@ const LocalStrategy = require("passport-local")
 const User = require("./models/user")
 const userRoutes = require("./routes/user")
 
+const dburl = process.env.DB_URL
 
 app.engine('ejs',ejsmate)
 app.set("view engine","ejs");
@@ -37,6 +38,7 @@ app.use(session({
     saveUninitialized:true,
     cookie:{
         httpOnly:true,
+        //secure:true,
         expire:Date.now() + 1000*60*60*24*7,
         maxAge:1000*60*60*24*7
     }}))
@@ -64,6 +66,9 @@ app.use((req,res,next)=>{
     next()
 })
 
+app.get("/",(req,res)=>{
+    res.render("home")
+})
 
 
 app.use("/",userRoutes)
